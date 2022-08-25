@@ -103,7 +103,7 @@ def face_detect(images):
 
         results.append([x1, y1, x2, y2])
         bbox=[x1, y1, x2, y2]
-        k=lip_detect(images,bbox)
+        k=lip_detect(images[0],bbox)
         results[0]=k
     boxes = np.array(results)
     if not args.nosmooth: boxes = get_smoothened_boxes(boxes, T=5)
