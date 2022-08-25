@@ -90,6 +90,7 @@ def face_detect(images):
         break
 
     results = []
+    k=[]
     pady1, pady2, padx1, padx2 = args.pads
     for rect, image in zip(predictions, images):
         if rect is None:
@@ -100,11 +101,12 @@ def face_detect(images):
         y2 = min(image.shape[0], rect[3] + pady2)
         x1 = max(0, rect[0] - padx1)
         x2 = min(image.shape[1], rect[2] + padx2)
-
+      
         results.append([x1, y1, x2, y2])
         bbox=[x1, y1, x2, y2]
         k=lip_detect(images[0],bbox)
-        results[0]=k
+        results=[]
+        results.append(k)
     boxes = np.array(results)
     if not args.nosmooth: boxes = get_smoothened_boxes(boxes, T=5)
     results = [[image[y1: y2, x1:x2], (y1, y2, x1, x2)] for image, (x1, y1, x2, y2) in zip(images, boxes)]
