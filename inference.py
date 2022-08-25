@@ -143,9 +143,10 @@ def lip_detect(image,bbox):
     thresh = 5
     face1=[]
     face2=[]
-    if bbox[0] >= 0 and bbox[0] <= 500:
+    ih, iw, ic = image.shape
+    if bbox[0] >= 0 and bbox[0] <= (iw//2):
         face1 = bbox
-    elif bbox[0] > 500 and bbox[0] <= 1000:
+    elif bbox[0] > (iw//2) and bbox[0] <= iw:
         face2 = bbox
     mp_face_mesh = mp.solutions.face_mesh
     face_mesh = mp_face_mesh.FaceMesh(max_num_faces=3, min_detection_confidence=0.2)
@@ -191,19 +192,19 @@ def lip_detect(image,bbox):
                         p += 1
                         flag=2
                         # cv2.circle(image, (x, y), 2, (100, 100, 0), -1)
-                    if c > p:
-                        # This is for approximate handling.Send The face coordinates which has most number of circles because sometimes some circle forms on another face even if other face is speaking
-                        return face2
-                        # cv2.putText(image, 'c', (0,100), 'cv2.FONT_HERSHEY_SIMPLEX',1, (255,0,0), 2, cv2.LINE_AA)
-                    elif p > c:
-                        # Same reason as above
-                        return face1
-                    # cv2.putText(image, 'p', (0,100), 'cv2.FONT_HERSHEY_SIMPLEX',1, (255,0,0), 2, cv2.LINE_AA)
-                    if k < thresh:
-                        if flag==1:
-                            return face2
-                        elif flag==2:
-                            return face1
+            if c > p:
+                # This is for approximate handling.Send The face coordinates which has most number of circles because sometimes some circle forms on another face even if other face is speaking
+                return face2
+                # cv2.putText(image, 'c', (0,100), 'cv2.FONT_HERSHEY_SIMPLEX',1, (255,0,0), 2, cv2.LINE_AA)
+            elif p > c:
+                # Same reason as above
+                return face1
+                # cv2.putText(image, 'p', (0,100), 'cv2.FONT_HERSHEY_SIMPLEX',1, (255,0,0), 2, cv2.LINE_AA)
+            if k < thresh:
+                if flag==1:
+                    return face2
+                elif flag==2:
+                    return face1
 
 def datagen(frames, mels):
     img_batch, mel_batch, frame_batch, coords_batch = [], [], [], []
