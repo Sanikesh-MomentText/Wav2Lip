@@ -69,7 +69,7 @@ def get_smoothened_boxes(boxes, T):
     return boxes
 
 
-def face_detect(images):
+def face_detect(images,f):
     detector = face_detection.FaceAlignment(face_detection.LandmarksType._2D,
                                             flip_input=False, device=device)
 
@@ -104,7 +104,7 @@ def face_detect(images):
       
         results.append([x1, y1, x2, y2])
         bbox=[x1, y1, x2, y2]
-        k=lip_detect(images[0],bbox)
+        k=lip_detect(f,bbox)
         results=[]
         results.append(k)
     boxes = np.array(results)
@@ -208,14 +208,14 @@ def lip_detect(image,bbox):
                 elif flag==2:
                     return face1
 
-def datagen(frames, mels):
+def datagen(frames, mels,fr):
     img_batch, mel_batch, frame_batch, coords_batch = [], [], [], []
 
     if args.box[0] == -1:
         if not args.static:
-            face_det_results = face_detect(frames)  # BGR2RGB for CNN face detection
+            face_det_results = face_detect(frames,fr)  # BGR2RGB for CNN face detection
         else:
-            face_det_results = face_detect([frames[0]])
+            face_det_results = face_detect([frames[0]],fr)
     else:
         print('Using the specified bounding box instead of face detection...')
         y1, y2, x1, x2 = args.box
@@ -351,7 +351,7 @@ def main():
     full_frames = full_frames[:len(mel_chunks)]
 
     batch_size = args.wav2lip_batch_size
-    gen = datagen(full_frames.copy(), mel_chunks)
+    gen = datagen(full_frames.copy(), mel_chunks,frame)
 
     for i, (img_batch, mel_batch, frames, coords) in enumerate(tqdm(gen,
                                                                     total=int(
